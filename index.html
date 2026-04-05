@@ -205,6 +205,7 @@
             <!-- Admin Menu -->
             <li class="nav-item nav-item-custom admin-only"><a class="nav-link" href="#" onclick="showPage('admin-dashboard', this)"><i class="fa-solid fa-square-poll-vertical me-1"></i> Hasil Ujian</a></li>
             <li class="nav-item nav-item-custom admin-only"><a class="nav-link" href="#" onclick="showPage('admin-users', this)"><i class="fa-solid fa-users me-1"></i> Data Mahasiswa</a></li>
+            <li class="nav-item nav-item-custom admin-only"><a class="nav-link" href="#" onclick="showPage('admin-soal', this)"><i class="fa-solid fa-book me-1"></i> Kelola Soal</a></li>
             <!-- Student Menu -->
            
           </ul>
@@ -282,12 +283,41 @@
                 </tbody>
               </table>
             </div>
-          </div>
-        </div>
-      </div>
+         </div>
+                </div>
+              </div>
 
-      <!-- PAGE: UJIAN (MAHASISWA) -->
-      <div id="page-ujian" class="d-none">
+              <div id="page-admin-soal" class="d-none">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <div>
+                    <h4 class="fw-bold mb-0">Kelola Soal Ujian</h4>
+                    <p class="text-muted small mb-0">Ubah pertanyaan dan kunci jawaban</p>
+                  </div>
+                  <div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="loadPageData('admin-soal')"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+                  </div>
+                </div>
+                <div class="card shadow-sm border-0">
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light text-muted small">
+                          <tr>
+                            <th class="ps-4" style="width: 60px;">NO</th>
+                            <th>PERTANYAAN</th>
+                            <th>KUNCI</th>
+                            <th>AKSI</th>
+                          </tr>
+                        </thead>
+                        <tbody id="soalAdminContainer">
+                          </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="page-ujian" class="d-none">
         <div class="row mb-4 align-items-center">
           <div class="col-md-8">
             <h4 class="fw-bold mb-0">Ujian Tengah Semester</h4>
@@ -385,11 +415,65 @@
       </div>
     </div>
   </div>
-
+<div class="modal fade" id="modalEditSoal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border-0 shadow">
+        <form id="formEditSoal" onsubmit="window.handleEditSoalSubmit(event)">
+          <div class="modal-header bg-light border-0">
+            <h5 class="modal-title fw-bold">Edit Soal & Jawaban</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="editSoalId">
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold">Pertanyaan</label>
+              <textarea id="editPertanyaan" class="form-control" rows="3" required></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Opsi A</label>
+                <input type="text" id="editOpsiA" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Opsi B</label>
+                <input type="text" id="editOpsiB" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Opsi C</label>
+                <input type="text" id="editOpsiC" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Opsi D</label>
+                <input type="text" id="editOpsiD" class="form-control" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold">Opsi E</label>
+                <input type="text" id="editOpsiE" class="form-control">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-danger small fw-bold">Jawaban Benar (Kunci)</label>
+                <select id="editJawabanBenar" class="form-select border-danger" required>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-unsika" id="btnSaveSoal">Simpan Perubahan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  <script>
     // URL WebApp Anda yang aktif
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzhtiWovhqRxCqoCePnj4gG0A942g3zzk_0w03mue_yRedPPxW2yOYqn79BrlaMP6acTQ/exec';
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbw_kTmX89r-uYV1A6dg-FyCf7lJwjG7BUA1TBMsYPtRpwQV73DnXjrhGfVgz2m93a1h7g/exec';
     
     // Trik agar frontend GitHub tetap merasa terhubung dengan GAS
     const google = { active: true }; 
@@ -438,8 +522,10 @@
       var dbHasil = [];
       var dbUsers = [];
       var dbSoal = [];
+      var dbSoalAdmin = [];
       var isHasilLoaded = false;
       var isUsersLoaded = false;
+      var isSoalAdminLoaded = false;
       var currentAnswers = {};
       var timerInterval = null;
       var currentQIndex = 0; // Tracking posisi soal saat ini
@@ -488,7 +574,7 @@
         var container = document.getElementById(containerId);
         if (!container) return;
         var skeleton = '';
-        if (containerId === 'hasilContainer' || containerId === 'usersContainer') {
+        if (containerId === 'hasilContainer' || containerId === 'usersContainer' || containerId === 'soalAdminContainer') {
           for (var i = 0; i < 5; i++) {
             skeleton += '<tr><td colspan="5"><div class="placeholder-glow"><span class="placeholder col-12 rounded" style="height:30px;"></span></div></td></tr>';
           }
@@ -580,6 +666,8 @@
           if (!isHasilLoaded) { fetchHasil(); } else { renderHasil(); }
         } else if (pageName === 'admin-users') {
           if (!isUsersLoaded) { fetchUsers(); } else { renderUsers(); }
+        } else if (pageName === 'admin-soal') {
+          if (!isSoalAdminLoaded) { fetchSoalAdmin(); } else { renderSoalAdmin(); }
         } else if (pageName === 'ujian') {
           fetchSoal();
         }
@@ -591,7 +679,8 @@
         }
         clearInterval(timerInterval);
         Auth.clear();
-        dbHasil = []; dbUsers = []; dbSoal = []; currentAnswers = {};
+        dbHasil = []; dbUsers = []; dbSoal = []; dbSoalAdmin = []; currentAnswers = {};
+        isHasilLoaded = false; isUsersLoaded = false; isSoalAdminLoaded = false;
         isHasilLoaded = false; isUsersLoaded = false;
         activePage = '';
         checkLoginState();
@@ -697,7 +786,120 @@
         });
         container.innerHTML = html;
       }
+// ==========================================
+      // ADMIN SOAL LOGIC
+      // ==========================================
+      function fetchSoalAdmin() {
+        var requestedPage = 'admin-soal';
+        showSectionLoading('soalAdminContainer');
 
+        if (typeof google === 'undefined') {
+          setTimeout(function() {
+            if (activePage !== requestedPage) return;
+            dbSoalAdmin = [
+              { id: 1, pertanyaan: "Apa yang dimaksud dengan literasi digital?", opsi_a: "Membaca teks digital", opsi_b: "Kecakapan menggunakan media digital dengan beretika", opsi_c: "Bisa menggunakan sosial media", opsi_d: "Kemampuan meretas sistem", opsi_e: "Ahli membuat website", jawaban_benar: "B" }
+            ];
+            isSoalAdminLoaded = true; renderSoalAdmin();
+          }, 800);
+        } else {
+          gasRun('getSoalAdmin', Auth.getToken())
+            .then(function(res) {
+              if (handleSessionExpired(res)) return;
+              if (activePage !== requestedPage) return;
+              if (!res.success) throw new Error(res.message);
+              dbSoalAdmin = res.data || [];
+              isSoalAdminLoaded = true;
+              renderSoalAdmin();
+            })
+            .catch(function(err) {
+              if (activePage !== requestedPage) return;
+              document.getElementById('soalAdminContainer').innerHTML = '<tr><td colspan="4" class="text-center text-danger">Gagal memuat data soal.</td></tr>';
+            });
+        }
+      }
+
+      function renderSoalAdmin() {
+        var container = document.getElementById('soalAdminContainer');
+        if (dbSoalAdmin.length === 0) {
+          container.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Belum ada soal tersedia.</td></tr>';
+          return;
+        }
+        var html = '';
+        dbSoalAdmin.forEach(function(item, index) {
+          html += '<tr>';
+          html += '<td class="ps-4 fw-bold">' + (index + 1) + '</td>';
+          html += '<td><div class="text-wrap" style="max-width: 450px;">' + escapeHTML(item.pertanyaan) + '</div></td>';
+          html += '<td><span class="badge bg-danger fs-6">' + escapeHTML(item.jawaban_benar) + '</span></td>';
+          html += '<td><button class="btn btn-sm btn-outline-danger" onclick="window.openEditSoal(' + item.id + ')"><i class="fa-solid fa-pen-to-square"></i> Edit</button></td>';
+          html += '</tr>';
+        });
+        container.innerHTML = html;
+      }
+
+      window.openEditSoal = function(id) {
+        var soal = dbSoalAdmin.find(function(s) { return String(s.id) === String(id); });
+        if(!soal) return;
+
+        document.getElementById('editSoalId').value = soal.id;
+        document.getElementById('editPertanyaan').value = soal.pertanyaan;
+        document.getElementById('editOpsiA').value = soal.opsi_a;
+        document.getElementById('editOpsiB').value = soal.opsi_b;
+        document.getElementById('editOpsiC').value = soal.opsi_c;
+        document.getElementById('editOpsiD').value = soal.opsi_d;
+        document.getElementById('editOpsiE').value = soal.opsi_e || '';
+        document.getElementById('editJawabanBenar').value = soal.jawaban_benar.toUpperCase();
+
+        var modal = new bootstrap.Modal(document.getElementById('modalEditSoal'));
+        modal.show();
+      };
+
+      window.handleEditSoalSubmit = function(e) {
+        e.preventDefault();
+        var payload = {
+          id: document.getElementById('editSoalId').value,
+          pertanyaan: document.getElementById('editPertanyaan').value,
+          opsi_a: document.getElementById('editOpsiA').value,
+          opsi_b: document.getElementById('editOpsiB').value,
+          opsi_c: document.getElementById('editOpsiC').value,
+          opsi_d: document.getElementById('editOpsiD').value,
+          opsi_e: document.getElementById('editOpsiE').value,
+          jawaban_benar: document.getElementById('editJawabanBenar').value
+        };
+
+        var btn = document.getElementById('btnSaveSoal');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...';
+
+        if (typeof google === 'undefined') {
+          setTimeout(function() {
+            var index = dbSoalAdmin.findIndex(function(s) { return String(s.id) === String(payload.id); });
+            if(index !== -1) dbSoalAdmin[index] = payload;
+            renderSoalAdmin();
+            bootstrap.Modal.getInstance(document.getElementById('modalEditSoal')).hide();
+            Swal.fire({icon:'success', title:'Tersimpan (Simulasi)', toast:true, position:'top-end', showConfirmButton:false, timer:1500});
+            btn.disabled = false; btn.innerText = 'Simpan Perubahan';
+          }, 800);
+        } else {
+          gasRun('updateSoal', Auth.getToken(), payload)
+            .then(function(res) {
+              if (handleSessionExpired(res)) return;
+              if (res.success) {
+                var index = dbSoalAdmin.findIndex(function(s) { return String(s.id) === String(payload.id); });
+                if(index !== -1) dbSoalAdmin[index] = payload;
+                renderSoalAdmin();
+                bootstrap.Modal.getInstance(document.getElementById('modalEditSoal')).hide();
+                Swal.fire({icon:'success', title:'Berhasil', text:res.message, toast:true, position:'top-end', showConfirmButton:false, timer:2000});
+              } else {
+                Swal.fire('Error', res.message, 'error');
+              }
+              btn.disabled = false; btn.innerText = 'Simpan Perubahan';
+            })
+            .catch(function(err) {
+              Swal.fire('Error', err.message, 'error');
+              btn.disabled = false; btn.innerText = 'Simpan Perubahan';
+            });
+        }
+      };
       // ==========================================
       // UJIAN & TIMER LOGIC (CBT STYLE - 1 SOAL/HALAMAN)
       // ==========================================
